@@ -1,0 +1,15 @@
+#!/bin/bash -x
+FS_MODULES="ext2 btrfs ext2 xfs jfs reiserfs"
+CD_MODULES=" all_video boot cat configfile echo true \
+		font gfxmenu gfxterm gzio halt iso9660 \
+		jpeg minicmd normal part_apple part_msdos part_gpt \
+		password_pbkdf2 png reboot search search_fs_uuid \
+		search_fs_file search_label sleep test video fat loadenv"
+PXE_MODULES="tftp http net ofnet"
+CRYPTO_MODULES="luks gcry_rijndael gcry_sha1 gcry_sha256"
+
+CD_MODULES="${CD_MODULES} linux"
+
+GRUB_MODULES="${CD_MODULES} ${FS_MODULES} ${PXE_MODULES} ${CRYPTO_MODULES} mdraid09 mdraid1x lvm serial regexp tr"
+
+grub2-mkimage -O powerpc-ieee1275 -o grub.ppc64le --prefix=  ${GRUB_MODULES}
