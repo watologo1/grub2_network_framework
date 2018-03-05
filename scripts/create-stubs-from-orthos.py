@@ -83,7 +83,7 @@ def create_stubs(domain, delete=False):
         if orthos_serial_baud in ['2400', '4800', '9600', '19200', '38400', '57600', '115200']:
             serial_baud = '--serial-baud {0} '.format(orthos_serial_baud)
 
-        cmd = 'sudo /srv/tftpboot/grub2/setup.py -a {0} -f {1} -m {2} '.format(
+        cmd = 'sudo /srv/tftpboot/grub2/scripts/setup.py -a {0} -f {1} -m {2} '.format(
             architecture,
             fqdn,
             mac_address
