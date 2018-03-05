@@ -44,11 +44,11 @@ def reset(fqdn, ipv4, mac_address, architecture):
         PREFIX_DIR.rstrip('/'),
         architecture,
         DEFAULT_DIR.rstrip('/'),
-        GRUB_CFG_MACHINE_FORMAT.format(mac_address)
+        hostname
     )
 
     if os.path.isfile(grub_cfg_default):
-        logging.info("Remove default: {0} ({1})".format(grub_cfg_default, hostname))
+        logging.info("Remove default: {0}".format(grub_cfg_default))
         os.remove(grub_cfg_default)
 
     reset_list.remove(mac_address)
@@ -70,7 +70,7 @@ if __name__ == '__main__':
     for line in lines:
         pattern1 = r'.*from (\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}) filename '
         pattern2 = r'{0}/(\w+)/{1}/'.format(PREFIX_DIR.rstrip('/'), DEFAULT_DIR.rstrip('/'))
-        pattern3 = r'([\d[a-fA-F]{2}:[\d[a-fA-F]{2}:[\d[a-zA-F]{2}:[\d[a-fA-F]{2}:[\d[a-fA-F]{2}:[\d[a-fA-F]{2})'
+        pattern3 = r'([a-zA-Z0-9-\.])'
 
         match = re.search(pattern1 + pattern2 + pattern3, line)
 
