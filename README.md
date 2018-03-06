@@ -44,4 +44,9 @@ Script: `grub2/scripts/setup.py`
 - no manual interaction needed; triggered by Orthos
 - Example:
 
-    `grub2/scripts/setup.py -a x86_64 -m 00:11:22:33:44:55 -f foobar.suse.de --serial-console true --serial-line 1`
+    `grub2/scripts/setup.py --arch x86_64 \
+      --mac 00:11:22:33:44:55 \
+      --fqdn foobar.suse.de \
+      --serial-console true \
+      --serial-line 1 \
+      --kernel-options-append "noresume"`
