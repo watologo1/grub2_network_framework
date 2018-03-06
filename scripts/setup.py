@@ -264,7 +264,7 @@ def main():
 
     parser.add_argument(
         '-m',
-        '--mac-address',
+        '--mac',
         dest='mac_address',
         metavar='MAC',
         help='MAC address of the machine'
