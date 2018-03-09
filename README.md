@@ -16,7 +16,7 @@ TFTP Boot root directory: `/srv/tftpboot`
 |---------------------|----------------------------------------|
 | x86_64-efi          | `grub2/bootx86.efi` > `grub2/grub.efi` |
 | x86_64-legacy (pxe) | `grub2/grub.pxe`                       |
-| ppc64               | `grub2/grub.ppc64.biendian`            |
+| ppc64               | `grub2/grub.ppc64`                     |
 | ppc64le             | `grub2/grub.ppc64le`                   |
 
 ### Source order
