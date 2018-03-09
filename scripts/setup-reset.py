@@ -70,7 +70,7 @@ if __name__ == '__main__':
     for line in lines:
         pattern1 = r'.*from (\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}) filename '
         pattern2 = r'{0}/(\w+)/{1}/'.format(PREFIX_DIR.rstrip('/'), DEFAULT_DIR.rstrip('/'))
-        pattern3 = r'([a-zA-Z0-9-\.])'
+        pattern3 = r'([a-zA-Z0-9-\.]+)'
 
         match = re.search(pattern1 + pattern2 + pattern3, line)
 
