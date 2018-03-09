@@ -28,7 +28,7 @@ def get_fqdn(ipv4):
         return socket.getfqdn(ipv4)
     except Exception:
         logging.error("IPv4 unresolvable: {0}".format(ipv4))
-        return None
+    return None
 
 def reset(fqdn, ipv4, filename, architecture):
     if filename in reset_list:
@@ -79,5 +79,11 @@ if __name__ == '__main__':
             fqdn = get_fqdn(ipv4)
             architecture = match.group(2)
             filename = match.group(3)
+
+            if fqdn is None:
+                continue
+
+            if fqdn.split('.')[0] != filename:
+                logging.warning("Mismatch: {0} (fqdn) <-> {1} (hostname set by grub2 stub)".format(fqdn, filename))
 
             thread.start_new_thread(reset, (fqdn, ipv4, filename, architecture))
