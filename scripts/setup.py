@@ -38,7 +38,6 @@ set serial_baud=57600
 set serial_line=0
 set graphic_console=true
 set kernel_options=""
-set kernel_options_append=""
 
 source ${{prefix}}/${{arch}}/02-orthos-install/${{hostname}}
 """
@@ -310,15 +309,7 @@ def main():
         dest='kernel_options',
         metavar='KOPTS',
         default=None,
-        help='machine kernel options (explicit; no default kernel options)'
-    )
-
-    parser.add_argument(
-        '--kernel-options-append',
-        dest='kernel_options_append',
-        metavar='KOPTS',
-        default=None,
-        help='append kernel options to default kernel options'
+        help='machine kernel options (append kernel options line to default kernel options line with a leading \'+\'; e.g. \'+modprobe.blacklist=foo,bar splash ...\')'
     )
 
     parser.add_argument(
@@ -368,7 +359,6 @@ def main():
         serial_line=options.serial_line,
         graphic_console=options.graphic_console,
         kernel_options=options.kernel_options,
-        kernel_options_append=options.kernel_options_append,
         timeout=options.timeout
     )
     sys.exit(0)
