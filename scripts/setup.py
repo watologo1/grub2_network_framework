@@ -361,7 +361,7 @@ def main():
     update_stub(
         options.mac_address.lower(),
         options.architecture,
-        options.fqdn,
+        options.fqdn.lower(),
         default=options.default,
         serial_console=options.serial_console,
         serial_baud=options.serial_baud,
