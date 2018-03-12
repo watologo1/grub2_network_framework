@@ -49,4 +49,4 @@ Script: `grub2/scripts/setup.py`
       --fqdn foobar.suse.de \
       --serial-console true \
       --serial-line 1 \
-      --kernel-options-append "noresume"`
+      --kernel-options "+noresume"`
