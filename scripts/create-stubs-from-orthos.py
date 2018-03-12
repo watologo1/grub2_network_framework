@@ -96,6 +96,8 @@ def create_stubs(domain, delete=False):
                 os.remove(grub_cfg_machine)
 
         os.system(cmd)
+        # set ownership to 'nobody' as Orthos runs as nobody
+        os.chown(grub_cfg_machine, 65534, 65533)
 
 def main():
     parser = argparse.ArgumentParser(description='Script for intial generating grub2 configuration stubs from Orthos domains')
