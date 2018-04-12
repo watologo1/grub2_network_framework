@@ -142,6 +142,9 @@ def create_stub(filename, mac_address, architecture, fqdn):
             architecture=architecture
         ))
 
+    # set ownership to 'nobody' as Orthos runs as nobody
+    os.chown(filename, 65534, 65533)
+
     create_hostname_link(architecture, fqdn, filename)
 
 
