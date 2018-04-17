@@ -10,6 +10,9 @@ import time
 import socket
 import thread
 import logging
+from threading import Lock
+
+mutex_access_reset_list = Lock()
 
 TFTP_LOG = '/var/log/tftpd.log'
 LOG_FILE = '/var/log/grub2/reset'
@@ -19,7 +22,7 @@ DEFAULT_DIR = '02-orthos-install/'
 GRUB_CFG_MACHINE_FORMAT = '{0}'
 
 reset_list = []
-logging.basicConfig(filename=LOG_FILE, level=logging.INFO, format='[%(asctime)s]: %(message)s')
+logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG, format='[%(asctime)s]: %(message)s')
 
 logging.info('Start listening...')
 
@@ -31,11 +34,18 @@ def get_fqdn(ipv4):
     return None
 
 def reset(fqdn, ipv4, filename, architecture):
-    if filename in reset_list:
-        return
+    logging.debug('Start thread ({0} {1} {2} {3})...'.format(fqdn, ipv4, filename, architecture))
 
-    hostname = fqdn.split('.')[0]
+    mutex_access_reset_list.acquire()
+    if filename in reset_list:
+        logging.debug('Exit thread (filename already handled by another thread)')
+        mutex_access_reset_list.release()
+        return
+    mutex_access_reset_list.release()
+
+    mutex_access_reset_list.acquire()
     reset_list.append(filename)
+    mutex_access_reset_list.release()
 
     time.sleep(10)
 
@@ -44,14 +54,20 @@ def reset(fqdn, ipv4, filename, architecture):
         PREFIX_DIR.rstrip('/'),
         architecture,
         DEFAULT_DIR.rstrip('/'),
-        hostname
+        filename
     )
 
     if os.path.isfile(grub_cfg_default):
         logging.info("Remove default: {0}".format(grub_cfg_default))
         os.remove(grub_cfg_default)
+    else:
+        logging.warning("File doesn't exist: {0}".format(grub_cfg_default))
 
+    mutex_access_reset_list.acquire()
     reset_list.remove(filename)
+    mutex_access_reset_list.release()
+
+    logging.debug('Exit thread')
 
 
 # https://stackoverflow.com/questions/5419888/reading-from-a-frequently-updated-file
@@ -62,6 +78,10 @@ def follow(f):
         if not line:
             time.sleep(0.1)
             continue
+        if '\n' not in line:
+            logger.debug('No new line found in line')
+        elif line[-1] != '\n':
+            logger.debug('No new line found at the end of the line')
         yield line.strip('\n')
 
 if __name__ == '__main__':
@@ -81,9 +101,10 @@ if __name__ == '__main__':
             filename = match.group(3)
 
             if fqdn is None:
+                logging.warning("No FQDN found for {0}".format(ipv4))
                 continue
 
             if fqdn.split('.')[0] != filename:
-                logging.warning("Mismatch: {0} (fqdn) <-> {1} (hostname set by grub2 stub)".format(fqdn, filename))
+                logging.warning("Mismatch: {0} (fqdn) <-> {1} (requested filename)".format(fqdn, filename))
 
             thread.start_new_thread(reset, (fqdn, ipv4, filename, architecture))
