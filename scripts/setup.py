@@ -115,23 +115,27 @@ def get_distribution_flavours(architecture, default=None):
 def create_hostname_link(architecture, fqdn, mac_address):
     hostname = fqdn.split('.')[0]
 
-    syslink_dir = '{0}/{1}/{2}/00-name-to-MAC/'.format(
+    symlink_dir = '{0}/{1}/{2}/00-name-to-MAC/'.format(
         TFTPBOOT_DIR.rstrip('/'),
         PREFIX_DIR.rstrip('/'),
         architecture
     )
-    syslink_filename = hostname
-    syslink = syslink_dir + syslink_filename
+    symlink_filename = hostname
+    symlink = symlink_dir + symlink_filename
 
-    if os.path.islink(syslink):
-        os.unlink(syslink)
+    if os.path.islink(symlink):
+        os.unlink(symlink)
 
-    target = '{0}/.../{1}'.format(syslink_dir.rstrip('/'), mac_address)
+    target = '{0}/.../{1}'.format(symlink_dir.rstrip('/'), mac_address)
 
     os.symlink(
-        os.path.relpath(target, syslink_dir),
-        syslink
+        os.path.relpath(target, symlink_dir),
+        symlink
     )
+
+    # set ownership to 'nobody' as Orthos runs as nobody
+    # python3.3+: os.chown(symlink, 65534, 65533, follow_symlinks=False)
+    os.system('chown -h nobody:nobody {0}'.format(symlink))
 
 
 def create_stub(filename, mac_address, architecture, fqdn):
