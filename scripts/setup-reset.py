@@ -70,19 +70,27 @@ def reset(fqdn, ipv4, filename, architecture):
     logging.debug('Exit thread')
 
 
-# https://stackoverflow.com/questions/5419888/reading-from-a-frequently-updated-file
 def follow(f):
     f.seek(0,2)
+    start = ''
     while True:
         line = f.readline()
         if not line:
-            time.sleep(0.1)
+            time.sleep(0.5)
             continue
-        if '\n' not in line:
-            logger.debug('No new line found in line')
-        elif line[-1] != '\n':
-            logger.debug('No new line found at the end of the line')
+        if line[-1] != '\n':
+            logging.warning("Incomplete line: '{0}'".format(line))
+            start = start + line
+            continue
+        elif '\n' in line and line[-1] != '\n':
+            logger.exception("Interspersed new-line: '{0}'".format(line))
+            sys.exit(1)
+        if start:
+            line = start + line
+            start = ''
+
         yield line.strip('\n')
+
 
 if __name__ == '__main__':
     logfile = open(TFTP_LOG, 'r')
