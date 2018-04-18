@@ -12,9 +12,9 @@ import logging
 TFTPBOOT_DIR = '/srv/tftpboot/'
 PREFIX_DIR = 'grub2/'
 CONFIG_DIR = '00-config/'
-DEFAULT_DIR = '02-orthos-install/'
+DEFAULT_DIR = '01-orthos-install/'
 GRUB_CFG_GLOBAL = 'grub.cfg'
-GRUB_CFG_ARCH = '01-grub.cfg'
+GRUB_CFG_ARCH = '02-grub.cfg'
 ARCHITECTURES = [
     'x86_64',
     'ppc64',
