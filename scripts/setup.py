@@ -112,10 +112,10 @@ def get_distribution_flavours(architecture, default=None):
     return flavours
 
 
-def create_hostname_link(architecture, fqdn, target):
+def create_hostname_link(architecture, fqdn, mac_address):
     hostname = fqdn.split('.')[0]
 
-    syslink_dir = '{0}/{1}/{2}/'.format(
+    syslink_dir = '{0}/{1}/{2}/00-name-to-MAC/'.format(
         TFTPBOOT_DIR.rstrip('/'),
         PREFIX_DIR.rstrip('/'),
         architecture
@@ -125,6 +125,8 @@ def create_hostname_link(architecture, fqdn, target):
 
     if os.path.islink(syslink):
         os.unlink(syslink)
+
+    target = '{0}/.../{1}'.format(syslink_dir.rstrip('/'), mac_address)
 
     os.symlink(
         os.path.relpath(target, syslink_dir),
@@ -145,7 +147,7 @@ def create_stub(filename, mac_address, architecture, fqdn):
     # set ownership to 'nobody' as Orthos runs as nobody
     os.chown(filename, 65534, 65533)
 
-    create_hostname_link(architecture, fqdn, filename)
+    create_hostname_link(architecture, fqdn, mac_address)
 
 
 def create_default(filename, default, fqdn):
@@ -209,7 +211,7 @@ def update_stub(mac_address, architecture, fqdn, **kwargs):
     else:
         logging.info("No changes: {0} ({1})".format(grub_cfg_machine, fqdn))
 
-    create_hostname_link(architecture, fqdn, grub_cfg_machine)
+    create_hostname_link(architecture, fqdn, mac_address)
 
 def main():
     parser = argparse.ArgumentParser(description='Script for generating grub2 configuration stubs.')
