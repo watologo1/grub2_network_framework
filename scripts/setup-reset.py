@@ -18,7 +18,7 @@ TFTP_LOG = '/var/log/tftpd.log'
 LOG_FILE = '/var/log/grub2/reset'
 TFTPBOOT_DIR = '/srv/tftpboot/'
 PREFIX_DIR = 'grub2/'
-DEFAULT_DIR = '02-orthos-install/'
+DEFAULT_DIR = '01-orthos-install/'
 GRUB_CFG_MACHINE_FORMAT = '{0}'
 
 reset_list = []
