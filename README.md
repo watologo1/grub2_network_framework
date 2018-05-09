@@ -12,12 +12,19 @@ TFTP Boot root directory: `/srv/tftpboot`
 
 ### DHCP configuration
 
-| Architecture        | Binary(s)                              |
-|---------------------|----------------------------------------|
-| x86_64-efi          | `grub2/bootx86.efi` > `grub2/grub.efi` |
-| x86_64-legacy (pxe) | `grub2/grub.pxe`                       |
-| ppc64               | `grub2/grub.ppc64`                     |
-| ppc64le             | `grub2/grub.ppc64le`                   |
+| Architecture        | Binary(s)                               |
+|---------------------|-----------------------------------------|
+| x86_64-efi          | `grub2/shim-x86.efi` > `grub2/grub.efi` |
+| x86_64-legacy (pxe) | `pxelinux.0` > `grub2/grub.0`           |
+| ppc64               | `grub2/grub.ppc64`                      |
+| ppc64le             | `grub2/grub.ppc64le`                    |
+
+EFI uses currently `shim-x86.efi` to bootstrap the grub2 EFI binary.
+
+On `x86_64-legacy` there is an grub2/grub1 issue! When booting the `grub.pxe` (grub2) via network,
+using `local` for chainloading grub1 from disk, the kernel/initrd gets loaded but does not start.
+Therefor we load `pxelinux.0` on non-EFI (=legacy) x86_64 machines and bootstrap grub2 in case of
+a Orthos setup/installation. Otherwise, the `pxelinux.0` just boots from disk as usual.
 
 ### Source order
 
