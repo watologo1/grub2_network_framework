@@ -58,3 +58,13 @@ Script: `grub2/scripts/setup.py`
       --serial-console true \
       --serial-line 1 \
       --kernel-options "+noresume"`
+
+### Remove machine specific grub2 default files (clean up for unclaimed files):
+
+Script: `grub2/scripts/setup-remove-deprecated-defaults.py`
+
+- remove files (3) if mtime is older than 4h
+- cron jop: /etc/cron.d/remove_deprecated_defaults` (every hour)
+- Example:
+
+    `grub2/scripts/setup-remove-deprecated-defaults.py`
