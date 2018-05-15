@@ -26,6 +26,9 @@ logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG, format='[%(asctime)s
 
 
 if __name__ == '__main__':
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from setup_reset import reset_pxe
+
     logging.debug("Start...")
 
     for architecture in ARCHITECTURES:
@@ -58,5 +61,9 @@ if __name__ == '__main__':
             if datetime.now() - modified > timedelta_:
                 logging.info('Delete deprecated default file: {0}'.format(file))
                 os.remove(file)
+
+                if architecture == 'x86_64':
+                    logging.debug('Try to reset PXE configuration for: {0}'.format(filename))
+                    reset_pxe(filename, architecture)
 
     logging.debug("Exit.")
