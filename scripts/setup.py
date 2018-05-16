@@ -134,7 +134,7 @@ def get_distribution_flavours(architecture, default=None):
 
     for distribution in distributions:
         for flavour in FLAVOURS:
-            flavours.append('{0}-{1}'.format(distribution, flavour))
+            flavours.append('{0}:{1}-{2}'.format(distribution, distribution, flavour))
 
     if default:
         flavours.append(DEFAULT)
