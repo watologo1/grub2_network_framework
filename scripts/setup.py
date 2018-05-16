@@ -204,7 +204,7 @@ def create_grub_stub(filename, mac_address, architecture, fqdn):
         ))
 
     # set ownership to 'nobody' as Orthos runs as nobody
-    os.chown(filename, 65534, 65533)
+    os.system('chown nobody:nobody {0}'.format(filename))
 
     create_grub_hostname_link(architecture, fqdn, mac_address)
 
@@ -283,7 +283,7 @@ def create_pxe_stub(filename, mac_address, architecture, fqdn):
         ))
 
     # set ownership to 'nobody' as Orthos runs as nobody
-    os.chown(filename, 65534, 65533)
+    os.system('chown nobody:nobody {0}'.format(filename))
 
     create_pxe_hostname_link(architecture, fqdn, mac_address)
 
