@@ -237,11 +237,6 @@ def update_grub_stub(mac_address, architecture, fqdn, **kwargs):
     if 'default' in update.keys():
         default = update.pop('default')
 
-        for distribution in get_distributions(architecture=architecture):
-            if default.startswith(distribution):
-                default = '{0}>{1}'.format(distribution, default)
-                break
-
         grub_cfg_default = '{0}/{1}/{2}/{3}/{4}'.format(
             TFTPBOOT_DIR.rstrip('/'),
             PREFIX_DIR.rstrip('/'),
@@ -249,6 +244,23 @@ def update_grub_stub(mac_address, architecture, fqdn, **kwargs):
             DEFAULT_DIR.rstrip('/'),
             hostname
         )
+
+        if default == 'local':
+            if os.path.isfile(grub_cfg_default):
+                logging.info("Remove existing default file due to 'local': {0} ({1})".format(grub_cfg_default ,fqdn))
+                os.remove(grub_cfg_default)
+
+            update_pxe_stub(
+                mac_address,
+                architecture,
+                fqdn,
+            )
+            return
+
+        for distribution in get_distributions(architecture=architecture):
+            if default.startswith(distribution):
+                default = '{0}>{1}'.format(distribution, default)
+                break
 
         logging.info("Create default file: {0} ({1})".format(grub_cfg_default, fqdn))
         create_grub_default(grub_cfg_default, default, fqdn)
@@ -303,10 +315,12 @@ def update_pxe_stub(mac_address, architecture, fqdn, **kwargs):
 
     update = dict([key, value] for key, value in kwargs.iteritems() if value is not None)
 
-    if 'default' in update.keys():
+    if 'default' in update.keys() and update['default'] == 'local':
+        default = 'local'
+    elif 'default' in update.keys():
         default = 'network'
     else:
-        default = DEFAULT
+        default = 'local'
 
     if update:
         with open(pxe_cfg_machine, 'r') as f:
