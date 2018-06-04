@@ -68,8 +68,10 @@ Script: `grub2/scripts/setup-remove-deprecated-defaults.py`
 - cron job: `/etc/cron.d/remove_deprecated_defaults` (every hour)
 - Example:
 
-    `grub2/scripts/setup-remove-deprecated-defaults.py`
-
+```
+0 * * * * root python /srv/tftpboot/grub2/scripts/setup-remove-deprecated-defaults.py
+```
+    
 ### Create tftpd.log file
 
 - install TFTP server: `zypper in tftp`
