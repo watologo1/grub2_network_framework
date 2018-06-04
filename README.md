@@ -44,6 +44,7 @@ Script: `grub2/scripts/setup-reset.py`
 
 - use `rcsetup-reset start|stop`
 - logfile: `/var/log/grub2/reset`
+- required: `/var/log/tftpd.log` (see below)
 
 ### Create machine specific stub:
 
@@ -64,7 +65,56 @@ Script: `grub2/scripts/setup.py`
 Script: `grub2/scripts/setup-remove-deprecated-defaults.py`
 
 - remove files (3) if mtime is older than 4h
-- cron jop: /etc/cron.d/remove_deprecated_defaults` (every hour)
+- cron job: `/etc/cron.d/remove_deprecated_defaults` (every hour)
 - Example:
 
     `grub2/scripts/setup-remove-deprecated-defaults.py`
+
+### Create tftpd.log file
+
+- install TFTP server: `zypper in tftp`
+- create empty log file: `touch /var/log/tftpd.log`
+- change file permissions: `chmod 644 /var/log/tftpd.log`
+- modify `/etc/xinetd.d/tftp`:
+
+```
+# default: off
+# description: tftp service is provided primarily for booting or when a \
+#       router need an upgrade. Most sites run this only on machines acting as
+#       "boot servers".
+service tftp
+{
+    disable         = no
+    socket_type     = dgram
+    protocol        = udp
+    wait            = yes
+    user            = root
+    server          = /usr/sbin/in.tftpd
+    server_args     =  -v -v -s /tftpboot
+    flags           = IPv6 IPv4
+}
+```
+
+- restart xinetd service: `rcxinetd restart`
+- restart tftpd service: `rctftp restart`
+- modify `/etc/systemd/journald.conf` (remove comments):
+
+```
+...
+ForwardToSyslog=yes
+MaxLevelSyslog=debug
+...
+```
+- add rsyslog rule in `/etc/rsyslog.conf`:
+
+```
+...
+# tftpd log
+#
+if      ($programname == 'in.tftpd') or \
+        ($msg contains 'tftpd') \
+then {
+        -/var/log/tftpd.log
+}
+...
+```
