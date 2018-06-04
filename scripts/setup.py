@@ -6,6 +6,7 @@
 import argparse
 import sys
 import os
+import pwd
 import re
 import logging
 
@@ -347,6 +348,12 @@ def update_pxe_stub(mac_address, architecture, fqdn, **kwargs):
 
 def main():
     parser = argparse.ArgumentParser(description='Script for generating grub2 configuration stubs.')
+
+    user = pwd.getpwuid(os.getuid()).pw_name
+
+    if user not in ['nobody', 'root']:
+        logging.error("Please run this script as user 'root' or 'nobody'! Exit.")
+        sys.exit(1)
 
     parser.add_argument(
         '-l',
