@@ -346,7 +346,8 @@ def update_pxe_stub(mac_address, architecture, fqdn, **kwargs):
     create_pxe_hostname_link(architecture, fqdn, mac_address)
 
 
-def main():
+def parse_args():
+
     parser = argparse.ArgumentParser(description='Script for generating grub2 configuration stubs.')
 
     user = pwd.getpwuid(os.getuid()).pw_name
@@ -464,7 +465,11 @@ def main():
         help='timeout in seconds'
     )
 
-    options = parser.parse_args()
+    return parser.parse_args()
+
+def main():
+
+    options = parse_args()
 
     if options.list_architecture:
         for record in get_distribution_flavours(options.list_architecture, default=DEFAULT):
